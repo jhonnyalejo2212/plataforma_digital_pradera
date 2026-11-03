@@ -1,8 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useTransition } from "react";
 import { Field, FormGrid, inputClass } from "@/components/admin/form";
 import { Button } from "@/components/ui/button";
+import { useConfirm, useToast } from "@/components/ui/feedback";
 import { Icon } from "@/components/ui/icon";
 import { guardarEstablecimiento } from "@/features/establecimientos/admin-actions";
 import { ESTADOS_PUBLICACION } from "@/features/establecimientos/labels";
@@ -30,7 +31,18 @@ export function EstablecimientoForm({ initial, categorias, administradores, crea
   administradores: { id: number; nombre: string }[];
   creado?: boolean;
 }) {
-  const [state, action, pending] = useActionState(guardarEstablecimiento, initialState);
+  const toast = useToast();
+  const [state, action, pending] = useActionState(async (prev: EstablecimientoFormState, formData: FormData) => {
+    const res = await guardarEstablecimiento(prev, formData);
+    if (res.ok) toast.success(res.message);
+    else toast.error(res.message, "No se pudo guardar");
+    return res;
+  }, initialState);
+  useEffect(() => {
+    if (!creado) return;
+    toast.success("El establecimiento se creó. Ahora puedes agregar fotos, horarios, contactos y oferta.", "Establecimiento creado");
+    window.history.replaceState(null, "", window.location.pathname);
+  }, [creado, toast]);
   const e = state.fieldErrors ?? {};
   const invalid = (k: string) => Boolean(e[k]);
   return (
@@ -79,8 +91,7 @@ export function EstablecimientoForm({ initial, categorias, administradores, crea
         )}
       </FormGrid>
       <div className="mt-7 flex flex-wrap items-center justify-end gap-[9px] border-t border-line pt-[18px]">
-        {creado && !state.message && <span role="status" className="mr-auto text-xs text-brand-700">Establecimiento creado.</span>}
-        {state.message && <span role={state.ok ? "status" : "alert"} className={`mr-auto text-xs ${state.ok ? "text-brand-700" : "text-[#b9574e]"}`}>{state.message}</span>}
+        {state.message && !state.ok && <span role="alert" className="mr-auto flex items-center gap-1.5 text-xs text-[#b9574e]"><Icon name="warning" size={15} />{state.message}</span>}
         <Button href="/admin/establecimientos" variant="secondary" icon="back">Volver al listado</Button>
         <Button type="submit" icon={initial.id ? "save" : "plus"} disabled={pending}>{pending ? "Guardando…" : initial.id ? "Guardar cambios" : "Crear establecimiento"}</Button>
       </div>
@@ -88,12 +99,27 @@ export function EstablecimientoForm({ initial, categorias, administradores, crea
   );
 }
 
-export function DeleteEstablecimientoForm({ id, action }: { id: number; action: (formData: FormData) => void | Promise<void> }) {
+export function DeleteEstablecimientoForm({ id, nombre, action }: { id: number; nombre: string; action: (formData: FormData) => void | Promise<void> }) {
+  const confirm = useConfirm();
+  const [pending, startTransition] = useTransition();
+  const onClick = async () => {
+    const ok = await confirm({
+      title: `¿Eliminar “${nombre}”?`,
+      description: "Dejará de verse en el sitio público. Podrás recuperarlo solo desde la base de datos.",
+      confirmLabel: "Sí, eliminar",
+      tone: "danger",
+    });
+    if (!ok) return;
+    startTransition(async () => {
+      const fd = new FormData();
+      fd.set("id", String(id));
+      await action(fd);
+    });
+  };
   return (
-    <form action={action} onSubmit={(ev) => { if (!confirm("¿Eliminar este establecimiento? Dejará de verse en el sitio.")) ev.preventDefault(); }}>
-      <input type="hidden" name="id" value={id} />
-      <button type="submit" className="flex items-center gap-1.5 rounded-lg border border-[#e8bcb7] px-3.5 py-2 text-xs font-bold text-[#b9574e] hover:bg-[#fceceb]"><Icon name="trash" size={15} />Eliminar establecimiento</button>
-    </form>
+    <button type="button" onClick={onClick} disabled={pending} className="flex items-center gap-1.5 rounded-lg border border-[#e8bcb7] px-3.5 py-2 text-xs font-bold text-[#b9574e] hover:bg-[#fceceb] disabled:opacity-50">
+      <Icon name="trash" size={15} />{pending ? "Eliminando…" : "Eliminar establecimiento"}
+    </button>
   );
 }
 

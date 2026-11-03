@@ -9,6 +9,7 @@ const variants = {
   ghost: "flex-row-reverse bg-transparent px-1 text-brand-700",
   dark: "bg-white text-brand-950",
   whatsapp: "bg-whatsapp text-white",
+  danger: "bg-[#c4544a] text-white",
 } as const;
 
 type Common = {

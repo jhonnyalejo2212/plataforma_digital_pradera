@@ -5,6 +5,7 @@ import { Field, FormGrid, inputClass } from "@/components/admin/form";
 import { StatusBadge } from "@/components/admin/ui";
 import { Button } from "@/components/ui/button";
 import { Icon, type IconName } from "@/components/ui/icon";
+import { useConfirm, useToast } from "@/components/ui/feedback";
 import { Modal } from "@/components/ui/modal";
 import { eliminarCategoria, guardarCategoria } from "@/features/categorias/admin-actions";
 import { CATEGORY_ICONS, CATEGORY_TONES } from "@/features/categorias/constants";
@@ -17,21 +18,37 @@ const normalize = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, 
 function CategoriaForm({ categoria, onDone }: { categoria: CategoriaAdmin | null; onDone: () => void }) {
   const [result, setResult] = useState<CategoriaResult | null>(null);
   const [pending, startTransition] = useTransition();
+  const toast = useToast();
+  const confirm = useConfirm();
   const errors = result?.fieldErrors ?? {};
 
   const save = (formData: FormData) =>
     startTransition(async () => {
       const res = await guardarCategoria(formData);
-      if (res.ok) onDone();
-      else setResult(res);
+      if (res.ok) {
+        toast.success(res.message);
+        onDone();
+      } else setResult(res);
     });
 
-  const remove = () => {
-    if (!categoria || !confirm(`¿Eliminar la categoría “${categoria.nombre}”?`)) return;
+  const remove = async () => {
+    if (!categoria) return;
+    const ok = await confirm({
+      title: `¿Eliminar “${categoria.nombre}”?`,
+      description: "La categoría dejará de estar disponible. Solo se puede eliminar si no tiene establecimientos asociados.",
+      confirmLabel: "Sí, eliminar",
+      tone: "danger",
+    });
+    if (!ok) return;
     startTransition(async () => {
       const res = await eliminarCategoria(categoria.id);
-      if (res.ok) onDone();
-      else setResult(res);
+      if (res.ok) {
+        toast.success(res.message);
+        onDone();
+      } else {
+        toast.error(res.message, "No se pudo eliminar");
+        setResult(res);
+      }
     });
   };
 

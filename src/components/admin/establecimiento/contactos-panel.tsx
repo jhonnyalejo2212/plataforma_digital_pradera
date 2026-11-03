@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { EmptyHint, iconButton, PanelCard, SaveBar, smallInput } from "@/components/admin/establecimiento/shared";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/feedback";
 import { Icon, type IconName } from "@/components/ui/icon";
 import { guardarContactos } from "@/features/establecimientos/detail-actions";
 import { TIPOS_CONTACTO } from "@/features/establecimientos/detail-constants";
@@ -19,6 +20,7 @@ export function ContactosPanel({ establecimientoId, contactos }: { establecimien
   const [rows, setRows] = useState<Row[]>(() => fromDb(contactos));
   const [result, setResult] = useState<ActionResult | null>(null);
   const [pending, startTransition] = useTransition();
+  const toast = useToast();
   const errors = result?.fieldErrors ?? {};
 
   const update = (key: string, patch: Partial<Row>) => {
@@ -29,7 +31,13 @@ export function ContactosPanel({ establecimientoId, contactos }: { establecimien
     startTransition(async () => {
       const res = await guardarContactos(establecimientoId, rows.map((r) => ({ id: r.id, tipo: r.tipo, valor: r.valor, etiqueta: r.etiqueta })));
       if (res.ok && res.data) setRows(fromDb(res.data));
-      setResult(res);
+      if (res.ok) {
+        toast.success(res.message);
+        setResult(null);
+      } else {
+        toast.error(res.message, "Revisa los contactos");
+        setResult(res);
+      }
     });
 
   return (

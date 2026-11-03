@@ -64,7 +64,7 @@ export default withPanelSuspense(async function EditarEstablecimientoPage({ para
                     longitud: est.longitud?.toString() ?? "",
                   }}
                 />
-                <div className="mt-5 flex justify-end"><DeleteEstablecimientoForm id={est.id} action={eliminarEstablecimiento} /></div>
+                <div className="mt-5 flex justify-end"><DeleteEstablecimientoForm id={est.id} nombre={est.nombre} action={eliminarEstablecimiento} /></div>
               </>
             ),
           },

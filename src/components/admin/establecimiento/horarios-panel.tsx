@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { PanelCard, SaveBar, smallInput } from "@/components/admin/establecimiento/shared";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/feedback";
 import { guardarHorarios } from "@/features/establecimientos/detail-actions";
 import type { ActionResult } from "@/features/establecimientos/detail-schemas";
 import type { Horario } from "@/features/establecimientos/types";
@@ -21,6 +22,7 @@ export function HorariosPanel({ establecimientoId, horarios }: { establecimiento
   );
   const [result, setResult] = useState<ActionResult | null>(null);
   const [pending, startTransition] = useTransition();
+  const toast = useToast();
   const errors = result?.fieldErrors ?? {};
 
   const update = (i: number, patch: Partial<Row>) => {
@@ -32,7 +34,17 @@ export function HorariosPanel({ establecimientoId, horarios }: { establecimiento
     setRows((r) => r.map((x, i) => (i === 0 ? x : { ...x, cerrado: first.cerrado, apertura: first.apertura, cierre: first.cierre })));
     setResult(null);
   };
-  const save = () => startTransition(async () => setResult(await guardarHorarios(establecimientoId, rows)));
+  const save = () =>
+    startTransition(async () => {
+      const res = await guardarHorarios(establecimientoId, rows);
+      if (res.ok) {
+        toast.success(res.message);
+        setResult(null);
+      } else {
+        toast.error(res.message, "Revisa los horarios");
+        setResult(res);
+      }
+    });
 
   return (
     <PanelCard

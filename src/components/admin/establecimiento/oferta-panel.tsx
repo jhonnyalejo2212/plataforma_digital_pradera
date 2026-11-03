@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { EmptyHint, iconButton, PanelCard, SaveBar, smallInput } from "@/components/admin/establecimiento/shared";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/feedback";
 import { Icon } from "@/components/ui/icon";
 import { guardarProductos } from "@/features/establecimientos/detail-actions";
 import type { ActionResult } from "@/features/establecimientos/detail-schemas";
@@ -17,6 +18,7 @@ export function OfertaPanel({ establecimientoId, productos }: { establecimientoI
   const [rows, setRows] = useState<Row[]>(() => fromDb(productos));
   const [result, setResult] = useState<ActionResult | null>(null);
   const [pending, startTransition] = useTransition();
+  const toast = useToast();
   const errors = result?.fieldErrors ?? {};
 
   const update = (key: string, patch: Partial<Row>) => {
@@ -27,7 +29,13 @@ export function OfertaPanel({ establecimientoId, productos }: { establecimientoI
     startTransition(async () => {
       const res = await guardarProductos(establecimientoId, rows.map((r) => ({ id: r.id, nombre: r.nombre, tipo: r.tipo, descripcion: r.descripcion, precio: r.precio, disponible: r.disponible })));
       if (res.ok && res.data) setRows(fromDb(res.data));
-      setResult(res);
+      if (res.ok) {
+        toast.success(res.message);
+        setResult(null);
+      } else {
+        toast.error(res.message, "Revisa la oferta");
+        setResult(res);
+      }
     });
 
   return (

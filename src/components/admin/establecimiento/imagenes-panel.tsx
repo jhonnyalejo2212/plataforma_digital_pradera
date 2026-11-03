@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useOptimistic, useRef, useState, useTransition, type DragEvent } from "react";
 import { EmptyHint, iconButton, PanelCard, smallInput } from "@/components/admin/establecimiento/shared";
+import { useConfirm, useToast } from "@/components/ui/feedback";
 import { Icon } from "@/components/ui/icon";
 import { actualizarTextoAlternativo, eliminarImagen, establecerPortada, reordenarImagenes, subirImagen } from "@/features/establecimientos/detail-actions";
 import { MAX_IMAGENES } from "@/features/establecimientos/detail-constants";
@@ -30,7 +31,8 @@ function reduce(list: ImagenAdmin[], a: OptimisticAction): ImagenAdmin[] {
 export function ImagenesPanel({ establecimientoId, imagenes }: { establecimientoId: number; imagenes: ImagenAdmin[] }) {
   const [list, apply] = useOptimistic(imagenes, reduce);
   const [uploads, setUploads] = useState<Upload[]>([]);
-  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const toast = useToast();
+  const confirm = useConfirm();
   const [dragging, setDragging] = useState(false);
   const [, startTransition] = useTransition();
   const input = useRef<HTMLInputElement>(null);
@@ -41,9 +43,10 @@ export function ImagenesPanel({ establecimientoId, imagenes }: { establecimiento
 
   async function handleFiles(files: FileList | File[]) {
     const queue = [...files].filter((f) => f.type.startsWith("image/"));
-    if (queue.length === 0) return setMessage({ ok: false, text: "Selecciona archivos de imagen." });
-    if (queue.length > remaining) setMessage({ ok: false, text: `Solo caben ${Math.max(0, remaining)} fotografías más (máximo ${MAX_IMAGENES}).` });
-    else setMessage(null);
+    if (queue.length === 0) return toast.error("Selecciona archivos de imagen (JPG, PNG, WebP…).", "Archivo no válido");
+    if (queue.length > remaining) toast.info(`Solo caben ${Math.max(0, remaining)} fotografías más (máximo ${MAX_IMAGENES}).`, "Límite de fotografías");
+    let subidas = 0;
+    let fallidas = 0;
     for (const file of queue.slice(0, Math.max(0, remaining))) {
       const key = crypto.randomUUID();
       const preview = URL.createObjectURL(file);
@@ -59,17 +62,22 @@ export function ImagenesPanel({ establecimientoId, imagenes }: { establecimiento
         if (!res.ok) throw new Error(res.message);
         setUploads((u) => u.filter((x) => x.key !== key));
         URL.revokeObjectURL(preview);
+        subidas++;
       } catch (e) {
         patch(key, { status: "error", note: e instanceof Error ? e.message : "No se pudo subir la imagen." });
+        fallidas++;
       }
     }
+    if (subidas) toast.success(subidas === 1 ? "La fotografía se subió y optimizó correctamente." : `${subidas} fotografías subidas y optimizadas.`, "Fotografías subidas");
+    if (fallidas) toast.error(fallidas === 1 ? "No se pudo subir una fotografía. Revisa el detalle en la tarjeta." : `No se pudieron subir ${fallidas} fotografías. Revisa el detalle en las tarjetas.`, "Error al subir");
   }
 
   const run = (action: OptimisticAction, call: () => Promise<{ ok: boolean; message: string }>) =>
     startTransition(async () => {
       apply(action);
       const res = await call();
-      setMessage({ ok: res.ok, text: res.message });
+      if (res.ok) toast.success(res.message);
+      else toast.error(res.message);
     });
 
   const move = (id: number, dir: -1 | 1) => {
@@ -102,8 +110,6 @@ export function ImagenesPanel({ establecimientoId, imagenes }: { establecimiento
         <input ref={input} type="file" accept="image/*" multiple hidden onChange={(e) => { if (e.target.files) void handleFiles(e.target.files); e.target.value = ""; }} />
       </div>
 
-      {message && <p role={message.ok ? "status" : "alert"} className={cn("mt-4 flex items-center gap-1.5 text-xs", message.ok ? "text-brand-700" : "text-[#b9574e]")}><Icon name={message.ok ? "check" : "info"} size={15} />{message.text}</p>}
-
       <div className="mt-5 grid grid-cols-2 gap-3.5 md:grid-cols-3 lg:grid-cols-4">
         {list.map((img, idx) => (
           <article key={img.id} className="overflow-hidden rounded-xl border border-line bg-white">
@@ -117,14 +123,14 @@ export function ImagenesPanel({ establecimientoId, imagenes }: { establecimiento
                 maxLength={255}
                 placeholder="Descripción de la foto"
                 aria-label="Descripción de la foto (texto alternativo)"
-                onBlur={(e) => e.target.value.trim() !== (img.texto_alternativo ?? "") && startTransition(async () => { const r = await actualizarTextoAlternativo(img.id, e.target.value); setMessage({ ok: r.ok, text: r.message }); })}
+                onBlur={(e) => e.target.value.trim() !== (img.texto_alternativo ?? "") && startTransition(async () => { const r = await actualizarTextoAlternativo(img.id, e.target.value); if (r.ok) toast.success("Descripción de la foto guardada."); else toast.error(r.message); })}
                 className={cn(smallInput, "py-2")}
               />
               <div className="flex items-center gap-1.5">
                 <button type="button" title="Mover antes" aria-label="Mover antes" disabled={idx === 0} onClick={() => move(img.id, -1)} className={iconButton}><Icon name="arrow" size={16} className="rotate-180" /></button>
                 <button type="button" title="Mover después" aria-label="Mover después" disabled={idx === list.length - 1} onClick={() => move(img.id, 1)} className={iconButton}><Icon name="arrow" size={16} /></button>
                 <button type="button" title="Usar como portada" aria-label="Usar como portada" disabled={img.es_principal} onClick={() => run({ type: "cover", id: img.id }, () => establecerPortada(img.id))} className={iconButton}><Icon name="star" size={16} /></button>
-                <button type="button" title="Eliminar" aria-label="Eliminar fotografía" onClick={() => confirm("¿Eliminar esta fotografía? No se puede deshacer.") && run({ type: "delete", id: img.id }, () => eliminarImagen(img.id))} className={cn(iconButton, "ml-auto text-[#b9574e] hover:border-[#e8bcb7] hover:text-[#b9574e]")}><Icon name="trash" size={16} /></button>
+                <button type="button" title="Eliminar" aria-label="Eliminar fotografía" onClick={async () => { if (await confirm({ title: "¿Eliminar esta fotografía?", description: "Se borrará del sitio y del almacenamiento. Esta acción no se puede deshacer.", confirmLabel: "Sí, eliminar", tone: "danger" })) run({ type: "delete", id: img.id }, () => eliminarImagen(img.id)); }} className={cn(iconButton, "ml-auto text-[#b9574e] hover:border-[#e8bcb7] hover:text-[#b9574e]")}><Icon name="trash" size={16} /></button>
               </div>
             </div>
           </article>

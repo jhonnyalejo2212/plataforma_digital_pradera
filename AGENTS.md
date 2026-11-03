@@ -20,6 +20,7 @@ Toda la interfaz debe sentirse como una aplicación, no como un sitio que recarg
 - **Búsqueda en vivo**: texto con retardo (~300 ms); `Enter` y perder el foco aplican de inmediato.
 - **Mutaciones** (crear, editar, eliminar, reportar): Server Actions con `useActionState`; mostrar estado de envío (`pending`), errores por campo y confirmación en la misma pantalla. Tras guardar, invalidar la caché con `updateTag` para que la interfaz refleje el cambio de inmediato.
 - **Acciones destructivas**: pedir confirmación en la interfaz antes de ejecutar.
+- **Prohibido** usar `window.confirm`, `alert` o `prompt` nativos. Todo mensaje al usuario usa los componentes propios de `src/components/ui/feedback.tsx`: `useConfirm()` (confirmaciones, con `tone: "danger"` para acciones destructivas) y `useToast()` (`toast.success`, `toast.error`, `toast.info`). Errores de campo se muestran en línea junto al campo; el resultado de una acción se muestra con un toast; usar siempre iconos acordes al tipo de mensaje.
 - Los enlaces siempre son `<a>`/`Link` reales (accesibles, abren en pestaña nueva), con el clic normal interceptado para navegar sin recargar.
 - Mantener accesibilidad: `aria-busy`, `aria-current`, `role="alert"` en errores, foco visible.
 
