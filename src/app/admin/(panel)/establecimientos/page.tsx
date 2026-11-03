@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
+import { withPanelSuspense } from "@/components/admin/panel-suspense";
 import Image from "next/image";
 import Link from "next/link";
 import { AdminTitle, StatusBadge } from "@/components/admin/ui";
+import { EstablecimientosFilters } from "@/components/admin/list-filters";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
+import { ClearFiltersButton, FilterLink, FiltersResults, UrlFiltersProvider } from "@/components/ui/url-filters";
 import { requireAdmin } from "@/features/auth/dal";
 import { ESTADOS_PUBLICACION, formatFecha, type EstadoPublicacion } from "@/features/establecimientos/labels";
 import { createClient } from "@/lib/supabase/server";
 import { sanitizeSearch } from "@/lib/utils/search";
-import { cn } from "@/lib/utils/cn";
 
 export const metadata: Metadata = { title: "Establecimientos" };
 
@@ -17,7 +19,7 @@ const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v
 
 type Row = { id: number; nombre: string; slug: string; estado_publicacion: EstadoPublicacion; updated_at: string; categorias: { nombre: string } | null; imagenes: { url: string; es_principal: boolean }[] };
 
-export default async function EstablecimientosAdminPage({ searchParams }: PageProps<"/admin/establecimientos">) {
+export default withPanelSuspense(async function EstablecimientosAdminPage({ searchParams }: PageProps<"/admin/establecimientos">) {
   await requireAdmin();
   const sp = await searchParams;
   const q = sanitizeSearch(first(sp.q));
@@ -40,34 +42,20 @@ export default async function EstablecimientosAdminPage({ searchParams }: PagePr
   ]);
   const total = count ?? 0;
   const totalPaginas = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const href = (changes: Record<string, string | number>) => {
-    const p = new URLSearchParams();
-    for (const [k, v] of Object.entries({ q, estado, categoria: categoria || "", pagina, ...changes })) if (v !== "" && v !== 0 && !(k === "pagina" && v === 1)) p.set(k, String(v));
-    return `/admin/establecimientos${p.size ? `?${p}` : ""}`;
-  };
 
   return (
     <>
       <AdminTitle title="Establecimientos" description="Consulta, registra, edita y cambia el estado de publicación de cada registro." action={<Button href="/admin/establecimientos/nuevo" icon="plus" iconOnlyOnMobile>Registrar establecimiento</Button>} />
+      <UrlFiltersProvider>
       <section className="overflow-hidden rounded-[14px] border border-line bg-white">
-        <form className="grid gap-3 border-b border-line p-[18px] md:grid-cols-[1fr_190px_170px_auto]">
-          <div className="flex h-11 items-center gap-[9px] rounded-[9px] border border-line pl-[13px] text-muted">
-            <Icon name="search" size={18} />
-            <input name="q" defaultValue={q} placeholder="Buscar por nombre, dirección o barrio…" className="min-w-0 flex-1 border-0 text-sm text-ink outline-0" />
-          </div>
-          <select name="categoria" defaultValue={categoria || ""} aria-label="Categoría" className="h-11 rounded-[9px] border border-line bg-white px-2.5 text-sm text-body">
-            <option value="">Todas las categorías</option>
-            {(categorias ?? []).map((c) => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-          </select>
-          <select name="estado" defaultValue={estado} aria-label="Estado" className="h-11 rounded-[9px] border border-line bg-white px-2.5 text-sm text-body">
-            <option value="">Todos los estados</option>
-            {Object.entries(ESTADOS_PUBLICACION).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-          </select>
-          <Button type="submit" variant="secondary" icon="filter">Filtrar</Button>
-        </form>
+        <EstablecimientosFilters
+          categorias={(categorias ?? []).map((c) => ({ value: c.id, label: c.nombre }))}
+          estados={Object.entries(ESTADOS_PUBLICACION).map(([value, label]) => ({ value, label }))}
+        />
+        <FiltersResults>
         {(data ?? []).length === 0 ? (
           <div className="grid min-h-[250px] place-items-center p-8 text-center text-muted">
-            <div><Icon name="search" size={28} className="mx-auto mb-3 text-brand-600" /><strong className="text-sm text-ink">No hay resultados</strong><p className="mt-1 mb-3 text-[11px]">No encontramos establecimientos con esos filtros.</p><Link href="/admin/establecimientos" className="text-[11px] font-bold text-brand-700">Limpiar filtros</Link></div>
+            <div><Icon name="search" size={28} className="mx-auto mb-3 text-brand-600" /><strong className="text-sm text-ink">No hay resultados</strong><p className="mt-1 mb-3 text-[11px]">No encontramos establecimientos con esos filtros.</p><ClearFiltersButton className="text-[11px] font-bold text-brand-700">Limpiar filtros</ClearFiltersButton></div>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -95,17 +83,19 @@ export default async function EstablecimientosAdminPage({ searchParams }: PagePr
             </table>
           </div>
         )}
+        </FiltersResults>
         <div className="flex items-center justify-between border-t border-line px-[18px] py-3 text-[11px] text-muted">
           <span>{total} {total === 1 ? "registro" : "registros"}</span>
           {totalPaginas > 1 && (
             <nav aria-label="Paginación" className="flex gap-1.5">
               {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((n) => (
-                <Link key={n} href={href({ pagina: n })} aria-current={n === pagina ? "page" : undefined} className={cn("grid size-8 place-items-center rounded-lg border border-line bg-white text-body", n === pagina && "border-brand-700 bg-brand-700 text-white")}>{n}</Link>
+                <FilterLink key={n} changes={{ pagina: n }} className="grid size-8 place-items-center rounded-lg border border-line bg-white text-body data-[active=true]:border-brand-700 data-[active=true]:bg-brand-700 data-[active=true]:text-white">{n}</FilterLink>
               ))}
             </nav>
           )}
         </div>
       </section>
+      </UrlFiltersProvider>
     </>
   );
-}
+});

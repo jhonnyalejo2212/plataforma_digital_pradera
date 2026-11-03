@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Suspense } from "react";
 import { CategoriesSection, FeaturedSection, SectionSkeleton } from "@/components/public/home-sections";
-import { SearchBar } from "@/components/public/search-bar";
+import { HeroSearchBar } from "@/components/public/search-bar";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Eyebrow } from "@/components/ui/section-heading";
@@ -35,7 +35,7 @@ export default function HomePage() {
           <p className="max-w-[580px] text-base leading-[1.65] text-[#ccdad3] md:text-lg">
             Encuentra comercios, sabores, servicios y experiencias que hacen único a nuestro municipio.
           </p>
-          <SearchBar />
+          <HeroSearchBar />
         </div>
         <div className="absolute top-[28%] right-[14%] size-4 rounded-full bg-brand-500 opacity-65" />
         <div className="absolute right-[27%] bottom-1/4 size-2 rounded-full bg-brand-500 opacity-50" />

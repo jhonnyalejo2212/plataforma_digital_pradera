@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { withPanelSuspense } from "@/components/admin/panel-suspense";
 import Link from "next/link";
 import { AdminTitle, Panel, StatusBadge } from "@/components/admin/ui";
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,7 @@ function Stat({ icon, tone, label, value, hint }: { icon: IconName; tone: string
   );
 }
 
-export default async function AdminDashboardPage() {
+export default withPanelSuspense(async function AdminDashboardPage() {
   await requireAdmin();
   const supabase = await createClient();
   const count = (table: string) => supabase.from(table).select("id", { count: "exact", head: true }).is("deleted_at", null);
@@ -83,4 +84,4 @@ export default async function AdminDashboardPage() {
       </div>
     </>
   );
-}
+});

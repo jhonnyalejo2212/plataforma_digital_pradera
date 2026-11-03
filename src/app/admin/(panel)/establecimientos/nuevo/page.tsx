@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { withPanelSuspense } from "@/components/admin/panel-suspense";
 import { AdminTitle } from "@/components/admin/ui";
 import { EstablecimientoForm } from "@/components/admin/establecimiento-form";
 import { requireAdmin } from "@/features/auth/dal";
@@ -6,7 +7,7 @@ import { getFormOptions } from "@/features/establecimientos/admin-queries";
 
 export const metadata: Metadata = { title: "Registrar establecimiento" };
 
-export default async function NuevoEstablecimientoPage() {
+export default withPanelSuspense(async function NuevoEstablecimientoPage() {
   const admin = await requireAdmin();
   const { categorias, administradores } = await getFormOptions();
   return (
@@ -19,4 +20,4 @@ export default async function NuevoEstablecimientoPage() {
       />
     </>
   );
-}
+});

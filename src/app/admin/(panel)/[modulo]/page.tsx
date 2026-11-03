@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { withPanelSuspense } from "@/components/admin/panel-suspense";
 import { AdminTitle } from "@/components/admin/ui";
 import { ADMIN_SECTIONS } from "@/components/admin/sections";
 import { Icon } from "@/components/ui/icon";
@@ -8,7 +9,7 @@ export function generateStaticParams() {
   return ADMIN_SECTIONS.filter((s) => s.href !== "/admin").map((s) => ({ modulo: s.href.replace("/admin/", "") }));
 }
 
-export default async function ModuloPendientePage({ params }: PageProps<"/admin/[modulo]">) {
+export default withPanelSuspense(async function ModuloPendientePage({ params }: PageProps<"/admin/[modulo]">) {
   await requireAdmin();
   const { modulo } = await params;
   const section = ADMIN_SECTIONS.find((s) => s.href === `/admin/${modulo}`);
@@ -21,4 +22,4 @@ export default async function ModuloPendientePage({ params }: PageProps<"/admin/
       </div>
     </>
   );
-}
+});

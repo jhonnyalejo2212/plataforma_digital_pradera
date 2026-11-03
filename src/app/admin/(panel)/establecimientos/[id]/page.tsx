@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { withPanelSuspense } from "@/components/admin/panel-suspense";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminTitle } from "@/components/admin/ui";
@@ -9,7 +10,7 @@ import { getEstablecimientoAdmin, getFormOptions } from "@/features/establecimie
 
 export const metadata: Metadata = { title: "Editar establecimiento" };
 
-export default async function EditarEstablecimientoPage({ params, searchParams }: PageProps<"/admin/establecimientos/[id]">) {
+export default withPanelSuspense(async function EditarEstablecimientoPage({ params, searchParams }: PageProps<"/admin/establecimientos/[id]">) {
   await requireAdmin();
   const [{ id: rawId }, sp] = await Promise.all([params, searchParams]);
   const id = Number(rawId);
@@ -43,4 +44,4 @@ export default async function EditarEstablecimientoPage({ params, searchParams }
       </div>
     </>
   );
-}
+});
