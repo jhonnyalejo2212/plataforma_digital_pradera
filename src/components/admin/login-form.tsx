@@ -30,7 +30,7 @@ export function LoginForm() {
         </div>
       </label>
       {state.message && <p role="alert" className="mt-4 rounded-lg bg-[#fceceb] px-3 py-2.5 text-xs text-[#a34d47]">{state.message}</p>}
-      <Button type="submit" disabled={pending} className="mt-[22px] w-full">{pending ? "Ingresando…" : "Ingresar al panel"}</Button>
+      <Button type="submit" icon="arrow" disabled={pending} className="mt-[22px] w-full">{pending ? "Ingresando…" : "Ingresar al panel"}</Button>
     </form>
   );
 }

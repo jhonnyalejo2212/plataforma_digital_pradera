@@ -22,7 +22,7 @@ export default withPanelSuspense(async function CategoriasAdminPage() {
   const categorias: CategoriaAdmin[] = (data ?? []).map(({ establecimientos, ...c }) => ({ ...c, total: establecimientos[0]?.count ?? 0 }));
   return (
     <>
-      <AdminTitle title="Categorías" description="Organiza la oferta local en grupos para facilitar la búsqueda." />
+      <AdminTitle icon="grid" title="Categorías" description="Organiza la oferta local en grupos para facilitar la búsqueda." />
       <CategoriasManager categorias={categorias} />
     </>
   );

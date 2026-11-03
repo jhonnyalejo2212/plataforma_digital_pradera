@@ -12,7 +12,7 @@ export default withPanelSuspense(async function NuevoEstablecimientoPage() {
   const { categorias, administradores } = await getFormOptions();
   return (
     <>
-      <AdminTitle title="Registrar establecimiento" description="Completa la información básica. Los horarios, contactos y fotografías se agregan después de crearlo." />
+      <AdminTitle icon="plus" title="Registrar establecimiento" description="Completa la información básica. Los horarios, contactos y fotografías se agregan después de crearlo." />
       <EstablecimientoForm
         categorias={categorias}
         administradores={administradores}

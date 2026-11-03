@@ -8,7 +8,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
-  images: { remotePatterns: remoteHosts.map((hostname) => ({ protocol: "https", hostname })) },
+  experimental: { serverActions: { bodySizeLimit: "2mb" } },
+  images: { remotePatterns: remoteHosts.map((hostname) => ({ protocol: "https", hostname })), formats: ["image/avif", "image/webp"] },
   turbopack: {
     rules: {
       "*.css": {

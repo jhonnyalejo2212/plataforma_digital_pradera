@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { Field, FormGrid, inputClass } from "@/components/admin/form";
 import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 import { guardarEstablecimiento } from "@/features/establecimientos/admin-actions";
 import { ESTADOS_PUBLICACION } from "@/features/establecimientos/labels";
 import type { EstablecimientoFormState } from "@/features/establecimientos/schema";
@@ -80,8 +81,8 @@ export function EstablecimientoForm({ initial, categorias, administradores, crea
       <div className="mt-7 flex flex-wrap items-center justify-end gap-[9px] border-t border-line pt-[18px]">
         {creado && !state.message && <span role="status" className="mr-auto text-xs text-brand-700">Establecimiento creado.</span>}
         {state.message && <span role={state.ok ? "status" : "alert"} className={`mr-auto text-xs ${state.ok ? "text-brand-700" : "text-[#b9574e]"}`}>{state.message}</span>}
-        <Button href="/admin/establecimientos" variant="secondary">Volver al listado</Button>
-        <Button type="submit" disabled={pending}>{pending ? "Guardando…" : initial.id ? "Guardar cambios" : "Crear establecimiento"}</Button>
+        <Button href="/admin/establecimientos" variant="secondary" icon="back">Volver al listado</Button>
+        <Button type="submit" icon={initial.id ? "save" : "plus"} disabled={pending}>{pending ? "Guardando…" : initial.id ? "Guardar cambios" : "Crear establecimiento"}</Button>
       </div>
     </form>
   );
@@ -91,7 +92,7 @@ export function DeleteEstablecimientoForm({ id, action }: { id: number; action: 
   return (
     <form action={action} onSubmit={(ev) => { if (!confirm("¿Eliminar este establecimiento? Dejará de verse en el sitio.")) ev.preventDefault(); }}>
       <input type="hidden" name="id" value={id} />
-      <button type="submit" className="text-xs font-bold text-[#b9574e]">Eliminar establecimiento</button>
+      <button type="submit" className="flex items-center gap-1.5 rounded-lg border border-[#e8bcb7] px-3.5 py-2 text-xs font-bold text-[#b9574e] hover:bg-[#fceceb]"><Icon name="trash" size={15} />Eliminar establecimiento</button>
     </form>
   );
 }

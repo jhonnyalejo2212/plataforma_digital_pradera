@@ -1,0 +1,15 @@
+import { AwsClient } from "aws4fetch";
+const { R2_ACCOUNT_ID: a, R2_ACCESS_KEY_ID: k, R2_SECRET_ACCESS_KEY: s, R2_BUCKET: b, R2_PUBLIC_URL: p } = process.env;
+console.log("host publico:", new URL(p).hostname, "| bucket:", b);
+const aws = new AwsClient({ accessKeyId: k, secretAccessKey: s, service: "s3", region: "auto" });
+const key = "pruebas/health.webp";
+const url = `https://${a}.r2.cloudflarestorage.com/${b}/${key}`;
+const body = new Uint8Array([0x52,0x49,0x46,0x46,0x1a,0,0,0,0x57,0x45,0x42,0x50,0x56,0x50,0x38,0x4c,0,0,0,0,0,0,0,0,0,0]);
+let r = await aws.fetch(url, { method: "PUT", body, headers: { "Content-Type": "image/webp", "Cache-Control": "public, max-age=31536000, immutable" } });
+console.log("PUT:", r.status, r.ok ? "ok" : (await r.text()).slice(0, 200));
+r = await fetch(`${p.replace(/\/$/, "")}/${key}`);
+console.log("GET publico:", r.status, r.headers.get("content-type"), r.headers.get("cache-control"));
+r = await aws.fetch(url, { method: "DELETE" });
+console.log("DELETE:", r.status);
+r = await fetch(`${p.replace(/\/$/, "")}/${key}`);
+console.log("GET tras borrar:", r.status);

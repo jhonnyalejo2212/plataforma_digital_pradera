@@ -40,7 +40,7 @@ export default withPanelSuspense(async function AdminDashboardPage() {
 
   return (
     <>
-      <AdminTitle title="Resumen" description="Estado general de la información del directorio." action={<Button href="/admin/establecimientos/nuevo" icon="plus" iconOnlyOnMobile>Nuevo establecimiento</Button>} />
+      <AdminTitle icon="dashboard" title="Resumen" description="Estado general de la información del directorio." action={<Button href="/admin/establecimientos/nuevo" icon="plus" iconOnlyOnMobile>Nuevo establecimiento</Button>} />
       <div className="grid grid-cols-2 gap-2.5 md:gap-[17px] xl:grid-cols-4">
         <Stat icon="building" tone="bg-brand-100 text-brand-700" label="Establecimientos" value={est.count ?? 0} hint={`${pub.count ?? 0} publicados`} />
         <Stat icon="grid" tone="bg-[#fff2d8] text-[#a26d1d]" label="Categorías" value={cat.count ?? 0} hint="Registradas" />

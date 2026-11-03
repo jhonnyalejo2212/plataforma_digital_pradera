@@ -30,7 +30,7 @@ export function ReportDialog({ slug, nombre }: { slug: string; nombre: string })
           {state.ok ? (
             <div className="space-y-4">
               <p className="rounded-[10px] bg-brand-50 p-3 text-sm text-brand-800" role="status">{state.message}</p>
-              <Button onClick={() => dialog.current?.close()} className="w-full">Cerrar</Button>
+              <Button icon="check" onClick={() => dialog.current?.close()} className="w-full">Cerrar</Button>
             </div>
           ) : (
             <form action={action} className="space-y-3.5">
@@ -50,8 +50,8 @@ export function ReportDialog({ slug, nombre }: { slug: string; nombre: string })
               <p className="text-[11px] text-muted">Tu nombre y correo solo se usan para que un administrador pueda contactarte sobre este reporte.</p>
               {state.message && <p className="text-sm text-[#b9574e]" role="alert">{state.message}</p>}
               <div className="flex justify-end gap-2.5">
-                <Button variant="secondary" onClick={() => dialog.current?.close()}>Cancelar</Button>
-                <Button type="submit" disabled={pending}>{pending ? "Enviando…" : "Enviar reporte"}</Button>
+                <Button variant="secondary" icon="x" onClick={() => dialog.current?.close()}>Cancelar</Button>
+                <Button type="submit" icon="flag" disabled={pending}>{pending ? "Enviando…" : "Enviar reporte"}</Button>
               </div>
             </form>
           )}

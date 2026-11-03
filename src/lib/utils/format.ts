@@ -12,3 +12,6 @@ export const googleMapsHref = (lat: number, lng: number) => `https://www.google.
 
 /** Solo permite enlaces http(s) provenientes de la base de datos. */
 export const safeUrl = (valor: string) => (/^https?:\/\//i.test(valor) ? valor : undefined);
+
+const cop = new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
+export const formatCOP = (valor: number) => cop.format(valor);

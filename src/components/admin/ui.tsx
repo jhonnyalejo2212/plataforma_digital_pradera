@@ -1,14 +1,18 @@
 import type { ReactNode } from "react";
+import { Icon, type IconName } from "@/components/ui/icon";
 import { Eyebrow } from "@/components/ui/section-heading";
 import { cn } from "@/lib/utils/cn";
 
-export function AdminTitle({ title, description, action }: { title: string; description: string; action?: ReactNode }) {
+export function AdminTitle({ title, description, action, icon }: { title: string; description: string; action?: ReactNode; icon?: IconName }) {
   return (
     <div className="mb-7 flex items-end justify-between gap-4">
-      <div>
-        <Eyebrow className="mb-0">Panel administrativo</Eyebrow>
-        <h1 className="mt-1 mb-1 text-[28px] md:text-[32px]">{title}</h1>
-        <p className="text-xs text-muted">{description}</p>
+      <div className="flex items-center gap-3.5">
+        {icon && <span className="grid size-[52px] shrink-0 place-items-center rounded-[14px] bg-brand-100 text-brand-700 max-sm:hidden"><Icon name={icon} size={26} /></span>}
+        <div className="min-w-0">
+          <Eyebrow className="mb-0">Panel administrativo</Eyebrow>
+          <h1 className="mt-1 mb-1 text-[28px] md:text-[32px]">{title}</h1>
+          <p className="text-xs text-muted">{description}</p>
+        </div>
       </div>
       {action}
     </div>

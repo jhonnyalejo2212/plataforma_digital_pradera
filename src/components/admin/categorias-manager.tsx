@@ -65,9 +65,9 @@ function CategoriaForm({ categoria, onDone }: { categoria: CategoriaAdmin | null
       </FormGrid>
       {result && !result.ok && <p role="alert" className="mt-4 rounded-lg bg-[#fceceb] px-3 py-2.5 text-xs text-[#a34d47]">{result.message}</p>}
       <footer className="sticky bottom-0 -mx-[25px] mt-6 flex items-center gap-[9px] border-t border-line bg-white px-[25px] py-[17px]">
-        {categoria && <button type="button" onClick={remove} disabled={pending} className="mr-auto text-xs font-bold text-[#b9574e] disabled:opacity-50">Eliminar</button>}
-        <Button variant="secondary" onClick={onDone} className={categoria ? "" : "ml-auto"}>Cancelar</Button>
-        <Button type="submit" disabled={pending}>{pending ? "Guardando…" : categoria ? "Guardar cambios" : "Crear categoría"}</Button>
+        {categoria && <button type="button" onClick={remove} disabled={pending} className="mr-auto flex items-center gap-1.5 text-xs font-bold text-[#b9574e] disabled:opacity-50"><Icon name="trash" size={15} />Eliminar</button>}
+        <Button variant="secondary" icon="x" onClick={onDone} className={categoria ? "" : "ml-auto"}>Cancelar</Button>
+        <Button type="submit" icon={categoria ? "save" : "plus"} disabled={pending}>{pending ? "Guardando…" : categoria ? "Guardar cambios" : "Crear categoría"}</Button>
       </footer>
     </form>
   );
@@ -84,7 +84,7 @@ export function CategoriasManager({ categorias }: { categorias: CategoriaAdmin[]
     <section className="overflow-hidden rounded-[14px] border border-line bg-white">
       <div className="flex items-center justify-between gap-3 border-b border-line px-[25px] py-[23px]">
         <div>
-          <h2 className="text-lg">Gestión de categorías</h2>
+          <h2 className="flex items-center gap-2 text-lg"><Icon name="grid" size={20} className="text-brand-700" />Gestión de categorías</h2>
           <p className="mt-[5px] text-[11px] text-muted">Consulta y administra las categorías que clasifican los establecimientos.</p>
         </div>
         <Button icon="plus" iconOnlyOnMobile onClick={() => setModal({ open: true, categoria: null })}>Registrar categoría</Button>
@@ -103,7 +103,7 @@ export function CategoriasManager({ categorias }: { categorias: CategoriaAdmin[]
               <StatusBadge tone={c.activa ? "success" : "neutral"}>{c.activa ? "Activa" : "Inactiva"}</StatusBadge>
             </div>
             <button type="button" onClick={() => setModal({ open: true, categoria: c })} className="flex h-[34px] items-center gap-1.5 rounded-lg border border-line bg-white px-[11px] text-[11px] font-bold text-brand-700">
-              Editar <Icon name="chevron" size={16} />
+              <Icon name="edit" size={15} />Editar
             </button>
           </article>
         ))}

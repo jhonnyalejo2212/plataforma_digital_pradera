@@ -45,7 +45,7 @@ export default withPanelSuspense(async function EstablecimientosAdminPage({ sear
 
   return (
     <>
-      <AdminTitle title="Establecimientos" description="Consulta, registra, edita y cambia el estado de publicación de cada registro." action={<Button href="/admin/establecimientos/nuevo" icon="plus" iconOnlyOnMobile>Registrar establecimiento</Button>} />
+      <AdminTitle icon="building" title="Establecimientos" description="Consulta, registra, edita y cambia el estado de publicación de cada registro." action={<Button href="/admin/establecimientos/nuevo" icon="plus" iconOnlyOnMobile>Registrar establecimiento</Button>} />
       <UrlFiltersProvider>
       <section className="overflow-hidden rounded-[14px] border border-line bg-white">
         <EstablecimientosFilters
@@ -73,8 +73,8 @@ export default withPanelSuspense(async function EstablecimientosAdminPage({ sear
                       <td className="px-[18px] py-3"><StatusBadge tone={r.estado_publicacion === "publicado" ? "success" : "warning"}>{ESTADOS_PUBLICACION[r.estado_publicacion]}</StatusBadge></td>
                       <td className="px-[18px] py-3">{formatFecha(r.updated_at)}</td>
                       <td className="px-[18px] py-3"><div className="flex justify-end gap-[6px]">
-                        <Link href={`/admin/establecimientos/${r.id}`} className="rounded-md border border-line px-2.5 py-1.5 text-[11px] font-bold text-brand-700">Editar</Link>
-                        {r.estado_publicacion === "publicado" && <Link href={`/directorio/${r.slug}`} target="_blank" className="rounded-md border border-line px-2.5 py-1.5 text-[11px] text-body">Ver</Link>}
+                        <Link href={`/admin/establecimientos/${r.id}`} className="flex items-center gap-1.5 rounded-md border border-line px-2.5 py-1.5 text-[11px] font-bold text-brand-700"><Icon name="edit" size={14} />Editar</Link>
+                        {r.estado_publicacion === "publicado" && <Link href={`/directorio/${r.slug}`} target="_blank" className="flex items-center gap-1.5 rounded-md border border-line px-2.5 py-1.5 text-[11px] text-body"><Icon name="eye" size={14} />Ver</Link>}
                       </div></td>
                     </tr>
                   );

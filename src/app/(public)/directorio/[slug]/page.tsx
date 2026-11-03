@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { getEstablecimientoBySlug } from "@/features/establecimientos/queries";
 import type { EstablecimientoDetalle, MedioContacto } from "@/features/establecimientos/types";
-import { DIAS, formatHora, googleMapsHref, mailHref, safeUrl, telHref, whatsappHref } from "@/lib/utils/format";
+import { DIAS, formatCOP, formatHora, googleMapsHref, mailHref, safeUrl, telHref, whatsappHref } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
 
 export async function generateMetadata({ params }: PageProps<"/directorio/[slug]">): Promise<Metadata> {
@@ -147,7 +147,9 @@ async function DetailContent({ params }: { params: PageProps<"/directorio/[slug]
               <h2 className={h2Class}>Productos y servicios</h2>
               <div className="flex flex-wrap gap-[9px]">
                 {business.productos.map((p) => (
-                  <span key={p.id} className={cn("rounded-lg bg-brand-50 px-3 py-2 text-xs text-brand-800", !p.disponible && "opacity-60 line-through")}>{p.nombre}</span>
+                  <span key={p.id} title={p.descripcion ?? undefined} className={cn("rounded-lg bg-brand-50 px-3 py-2 text-xs text-brand-800", !p.disponible && "opacity-60 line-through")}>
+                    {p.nombre}{p.precio !== null && <strong className="ml-1.5 font-bold text-brand-700">{formatCOP(p.precio)}</strong>}
+                  </span>
                 ))}
               </div>
             </article>
