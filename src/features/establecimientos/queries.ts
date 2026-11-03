@@ -1,5 +1,6 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { createPublicClient } from "@/lib/supabase/public";
+import { sanitizeSearch } from "@/lib/utils/search";
 import type { Categoria, EstablecimientoDetalle, EstablecimientoResumen, FiltrosDirectorio, Imagen } from "./types";
 
 export const PAGE_SIZE = 9;
@@ -26,10 +27,6 @@ function toResumen(row: Row): EstablecimientoResumen {
   };
 }
 
-/** Evita que caracteres con significado en filtros PostgREST/LIKE alteren la consulta. */
-function sanitizeSearch(q: string) {
-  return q.replace(/[%_\\,()*:."']/g, " ").replace(/\s+/g, " ").trim().slice(0, 80);
-}
 
 export async function getCategorias(): Promise<Categoria[]> {
   "use cache";

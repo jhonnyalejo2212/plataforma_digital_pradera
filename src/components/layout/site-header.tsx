@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useState, type ReactNode } from "react";
 import { Icon } from "@/components/ui/icon";
 import { Logo } from "@/components/ui/logo";
 import { cn } from "@/lib/utils/cn";
@@ -15,7 +14,7 @@ const links = [
   { href: "/#acerca-de", label: "Acerca de" },
 ];
 
-export function SiteHeader() {
+export function SiteHeader({ account }: { account: ReactNode }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   return (
@@ -44,7 +43,7 @@ export function SiteHeader() {
               </Link>
             );
           })}
-          <Button href="/admin/login" variant="secondary" onClick={() => setOpen(false)}>Ingresar</Button>
+          <div onClick={() => setOpen(false)} className="max-md:[&>*]:w-full">{account}</div>
         </nav>
         <button className="grid place-items-center text-brand-900 md:hidden" onClick={() => setOpen(!open)} aria-label="Abrir menú" aria-expanded={open}>
           <Icon name={open ? "x" : "menu"} />
