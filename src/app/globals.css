@@ -1,26 +1,60 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-sans: var(--font-dm-sans), sans-serif;
+  --font-display: var(--font-manrope), sans-serif;
+
+  --color-brand-950: #102b21;
+  --color-brand-900: #173c2d;
+  --color-brand-800: #20533e;
+  --color-brand-700: #286b4c;
+  --color-brand-600: #31835b;
+  --color-brand-500: #45a86f;
+  --color-brand-100: #e4f3e9;
+  --color-brand-50: #f1f8f3;
+  --color-cream: #f8f7f2;
+  --color-ink: #18221d;
+  --color-body: #4e5d55;
+  --color-muted: #7a8880;
+  --color-line: #dce4df;
+  --color-whatsapp: #25a95a;
+
+  --shadow-card: 0 14px 45px rgba(23, 60, 45, 0.1);
+  --shadow-soft: 0 7px 24px rgba(23, 60, 45, 0.07);
+
+  --radius-card: 16px;
+  --radius-panel: 24px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@utility container-page {
+  width: min(1160px, calc(100% - 40px));
+  margin-inline: auto;
+  @media (max-width: 760px) {
+    width: min(100% - 32px, 1160px);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background: #fff;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  button {
+    cursor: pointer;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.035em;
+  }
+  img {
+    display: block;
+    max-width: 100%;
+  }
 }
