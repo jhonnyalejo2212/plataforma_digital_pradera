@@ -94,7 +94,7 @@ from (values
   ('hotel-las-palmas', 'photo-1566073771259-6a8506099945'),
   ('pradera-bike-center', 'photo-1571068316344-75bc76f77890'),
   ('drogueria-la-11', 'photo-1586015555751-63bb77f4322a'),
-  ('centro-educativo-semillas', 'photo-1523050854058-8df90110c9f1'),
+  ('centro-educativo-semillas', 'photo-1503676260728-1c00da094a0b'),
   ('mercado-campesino-pradera', 'photo-1604719312566-8912e9227c6a'),
   ('soluciones-tecnicas-rivera', 'photo-1571068316344-75bc76f77890')
 ) as v(slug, foto)

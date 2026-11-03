@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { MapView } from "@/components/map/map-view";
+import { ReportDialog } from "@/components/public/report-dialog";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { getEstablecimientoBySlug } from "@/features/establecimientos/queries";
@@ -154,6 +156,7 @@ async function DetailContent({ params }: { params: PageProps<"/directorio/[slug]
             <article className={sectionClass}>
               <h2 className={h2Class}>Ubicación</h2>
               {address && <p className="mb-3 text-sm text-body">{address}, Pradera</p>}
+              {hasCoords && <MapView latitud={business.latitud!} longitud={business.longitud!} titulo={business.nombre} className="mb-3 h-[260px] w-full overflow-hidden rounded-[13px] bg-[#e8eee9]" />}
               {hasCoords && <Button href={googleMapsHref(business.latitud!, business.longitud!)} target="_blank" rel="noopener noreferrer" variant="ghost" icon="arrow">Cómo llegar en Google Maps</Button>}
             </article>
           )}
@@ -161,6 +164,7 @@ async function DetailContent({ params }: { params: PageProps<"/directorio/[slug]
         <aside className="flex flex-col gap-[17px] lg:sticky lg:top-6">
           <div className="max-lg:hidden"><ContactCard contactos={business.contactos} /></div>
           <Hours horarios={business.horarios} />
+          <ReportDialog slug={business.slug} nombre={business.nombre} />
         </aside>
       </section>
     </div>
