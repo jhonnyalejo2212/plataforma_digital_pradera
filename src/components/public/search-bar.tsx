@@ -43,7 +43,7 @@ function SearchBarView({ value, onChange, onSubmit, onFocus, onBlur, compact, bu
         autoComplete="off"
         className="min-w-0 flex-1 bg-transparent text-ink outline-0"
       />
-      <Button type="submit" iconOnlyOnMobile className="min-w-[105px]" disabled={busy}>Buscar</Button>
+      <Button type="submit" icon="search" iconOnlyOnMobile className="min-w-[105px]" disabled={busy}>Buscar</Button>
     </form>
   );
 }

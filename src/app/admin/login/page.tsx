@@ -23,7 +23,7 @@ export default function LoginPage() {
       </Suspense>
       <section className="relative flex min-h-[330px] flex-col overflow-hidden bg-[linear-gradient(145deg,var(--color-brand-950),var(--color-brand-800))] px-7 py-8 text-white md:min-h-0 md:px-[clamp(35px,5vw,78px)] md:py-[45px]">
         <div className="absolute -right-60 -bottom-[100px] size-[460px] rounded-full border border-white/[0.08] shadow-[0_0_0_70px_rgba(255,255,255,0.025),0_0_0_140px_rgba(255,255,255,0.018)]" />
-        <Logo inverse />
+        <Logo inverse sizeClass="h-[54px] w-[162px] md:h-[76px] md:w-[228px] lg:h-[88px] lg:w-[264px]" sizes="(min-width: 1024px) 264px, (min-width: 768px) 228px, 162px" />
         <div className="relative z-[2] my-auto max-w-[520px] max-md:mt-[65px] max-md:mb-[45px]">
           <Eyebrow light>Gestión local</Eyebrow>
           <h1 className="text-4xl leading-[1.08] md:text-[clamp(38px,4vw,58px)]">Información confiable para una Pradera más conectada.</h1>
