@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { MapView } from "@/components/map/map-view";
+import { Gallery } from "@/components/public/gallery";
 import { ReportDialog } from "@/components/public/report-dialog";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
@@ -23,25 +23,6 @@ export async function generateMetadata({ params }: PageProps<"/directorio/[slug]
 }
 
 const first = (contactos: MedioContacto[], tipo: MedioContacto["tipo"]) => contactos.find((c) => c.tipo === tipo);
-
-function Gallery({ business }: { business: EstablecimientoDetalle }) {
-  const [main, second, third] = business.imagenes;
-  if (!main) return null;
-  const img = (i: typeof main, className?: string) => (
-    <div className={cn("relative overflow-hidden bg-brand-50", className)}>
-      <Image src={i.url} alt={i.texto_alternativo ?? business.nombre} fill sizes="(min-width: 768px) 780px, 100vw" className="object-cover" priority={i === main} />
-    </div>
-  );
-  return (
-    <section className="container-page">
-      <div className={cn("grid h-[290px] gap-2.5 overflow-hidden rounded-card md:h-[415px]", second && "md:grid-cols-[2fr_1fr] md:grid-rows-2")}>
-        {img(main, second ? "md:row-span-2" : undefined)}
-        {second && img(second, "max-md:hidden")}
-        {third && img(third, "max-md:hidden")}
-      </div>
-    </section>
-  );
-}
 
 function ContactCard({ contactos }: { contactos: MedioContacto[] }) {
   const tel = first(contactos, "telefono");
@@ -116,7 +97,7 @@ async function DetailContent({ params }: { params: PageProps<"/directorio/[slug]
         <Link href={`/directorio?categoria=${business.categoria.slug}`}>{business.categoria.nombre}</Link><span>/</span>
         <strong className="text-body">{business.nombre}</strong>
       </div>
-      <Gallery business={business} />
+      <Gallery imagenes={business.imagenes} nombre={business.nombre} />
       <section className="container-page grid items-start gap-[25px] pt-[30px] pb-[90px] md:pt-[43px] lg:grid-cols-[1fr_340px] lg:gap-[70px]">
         <div>
           <div className="border-b border-line pb-[30px]">

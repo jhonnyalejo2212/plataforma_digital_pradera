@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { BusinessCard } from "@/components/public/business-card";
 import { DirectoryFilters } from "@/components/public/directory-filters";
+import { DirectorySort } from "@/components/public/directory-sort";
 import { FiltersToggle } from "@/components/public/filters-toggle";
 import { DirectorySearchBar } from "@/components/public/search-bar";
 import { Icon } from "@/components/ui/icon";
@@ -14,11 +15,6 @@ export const metadata: Metadata = {
   title: "Directorio",
   description: "Explora los establecimientos comerciales, gastronómicos, de servicios y turísticos de Pradera.",
 };
-
-const ordenes = [
-  { value: null, label: "Nombre A–Z" },
-  { value: "recientes", label: "Más recientes" },
-] as const;
 
 const chipClass = "flex items-center gap-1.5 rounded-lg bg-brand-50 px-2.5 py-2 text-[11px] font-bold text-brand-800";
 const pageClass = "grid size-9 place-items-center rounded-lg border border-line bg-white text-body data-[active=true]:border-brand-700 data-[active=true]:bg-brand-700 data-[active=true]:text-white";
@@ -64,14 +60,7 @@ async function DirectorioContent({ searchParams }: { searchParams: PageProps<"/d
                   </span>
                 ))}
               </div>
-              <nav aria-label="Ordenar" className="flex items-center gap-1 text-xs">
-                <span className="mr-1 text-muted">Ordenar:</span>
-                {ordenes.map((o) => (
-                  <FilterLink key={o.label} changes={{ orden: o.value }} className="rounded-lg border border-line px-2.5 py-1.5 text-body data-[active=true]:border-brand-700 data-[active=true]:bg-brand-700 data-[active=true]:text-white">
-                    {o.label}
-                  </FilterLink>
-                ))}
-              </nav>
+              <DirectorySort />
             </div>
 
             <FiltersResults>

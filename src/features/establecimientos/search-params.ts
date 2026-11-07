@@ -7,7 +7,7 @@ const schema = z.object({
   q: z.string().trim().max(80).optional().catch(undefined),
   categoria: z.string().regex(/^[a-z0-9-]{1,140}$/).optional().catch(undefined),
   barrio: z.string().trim().max(120).optional().catch(undefined),
-  orden: z.enum(["nombre", "recientes"]).catch("nombre"),
+  orden: z.enum(["nombre", "nombre_desc", "recientes", "antiguos"]).catch("nombre"),
   pagina: z.coerce.number().int().min(1).max(1000).catch(1),
 });
 

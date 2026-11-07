@@ -74,7 +74,10 @@ export async function listEstablecimientos(filtros: FiltrosDirectorio): Promise<
   if (term) query = query.or(["nombre", "descripcion", "direccion", "barrio"].map((c) => `${c}.ilike.%${term}%`).join(","));
   if (categoria) query = query.eq("categorias.slug", categoria);
   if (barrio) query = query.eq("barrio", barrio);
-  query = orden === "recientes" ? query.order("created_at", { ascending: false }) : query.order("nombre");
+  if (orden === "recientes") query = query.order("created_at", { ascending: false });
+  else if (orden === "antiguos") query = query.order("created_at");
+  else if (orden === "nombre_desc") query = query.order("nombre", { ascending: false });
+  else query = query.order("nombre");
   const from = (pagina - 1) * PAGE_SIZE;
   const { data, count, error } = await query.range(from, from + PAGE_SIZE - 1);
   if (error) throw error;

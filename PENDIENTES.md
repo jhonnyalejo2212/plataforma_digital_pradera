@@ -17,7 +17,7 @@ más lo necesario a nivel general para dar el proyecto por terminado.
   - Crear administrador: invitar correo vía Supabase Auth + registro en tabla `administradores`.
   - Detalle: datos de la cuenta, `auth_user_id`, establecimientos bajo su responsabilidad.
   - Activar/desactivar cuenta (confirmación + toast).
-- [ ] **Módulo de Reportes** (`/admin/reportes` — hoy "Próximamente")
+- [x] **Módulo de Reportes** (`/admin/reportes`)
   - Listado con filtro por estado (Pendiente / En revisión / Revisado).
   - Revisión: ver descripción, reportante y establecimiento; cambiar estado;
     guardar `administrador_revision_id`, `fecha_revision` y `observacion_admin`.
@@ -27,10 +27,11 @@ más lo necesario a nivel general para dar el proyecto por terminado.
 
 ### Sitio público
 
-- [ ] **Orden de resultados** en `/directorio` (el prototipo tenía select:
-  más recomendados / mejor calificados / más recientes — hoy no hay orden configurable).
-- [ ] **"Ver todas las fotos"**: galería completa/lightbox en la ficha
-  (hoy se muestran las imágenes sin vista ampliada).
+- [x] **Orden de resultados** en `/directorio` — select en la URL: Nombre A–Z / Z–A /
+  Más recientes / Más antiguos. Las opciones del prototipo basadas en rating
+  ("mejor calificados" / "recomendados") dependen de la decisión sobre `valoraciones`.
+- [x] **"Ver todas las fotos"**: galería completa/lightbox en la ficha
+  (diálogo a pantalla completa con flechas, contador y miniaturas).
 - [ ] **Registro de negocio**: el CTA "Registrar mi negocio" hoy es un `mailto`.
   Decidir si queda así o se crea un formulario público que registre el establecimiento
   como `borrador`/`en_revision` para que un administrador lo publique.
@@ -48,7 +49,8 @@ más lo necesario a nivel general para dar el proyecto por terminado.
   implementarla (formulario público + moderación en admin) o quitar el rating del diseño.
 - [ ] **Datos reales**: cargar categorías y establecimientos definitivos vía seed/panel,
   reemplazando los datos de demostración.
-- [ ] **Paginación/orden en listados del admin** donde aplique (establecimientos, reportes).
+- [x] **Paginación/orden en listados del admin** (establecimientos y reportes tienen
+  paginación + orden; administradores es una lista corta con búsqueda y filtro).
 - [ ] **SEO y metadatos**: Open Graph, descripción por establecimiento, favicon final.
 - [ ] **Despliegue**: variables de entorno de producción (Supabase, R2), dominio,
   revisión de políticas RLS y build final (`pnpm lint && pnpm build`).

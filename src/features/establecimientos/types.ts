@@ -35,5 +35,5 @@ export type EstablecimientoDetalle = EstablecimientoResumen & {
   productos: ProductoServicio[];
 };
 
-export type OrdenDirectorio = "nombre" | "recientes";
+export type OrdenDirectorio = "nombre" | "nombre_desc" | "recientes" | "antiguos";
 export type FiltrosDirectorio = { q?: string; categoria?: string; barrio?: string; orden: OrdenDirectorio; pagina: number };
