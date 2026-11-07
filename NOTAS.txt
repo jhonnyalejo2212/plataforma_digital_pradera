@@ -1,0 +1,6 @@
+Node js 24
+
+--- Administrador (desarrollo) ---
+Correo: admin@pradera.example
+Contrasena: DxnjmIpUoVZTluvtN6uiAa1!
+(Cuenta con dominio reservado .example: no recibe correos. Cambiar a un correo real antes de produccion.)
