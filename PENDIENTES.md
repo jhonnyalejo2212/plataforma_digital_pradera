@@ -12,7 +12,7 @@ más lo necesario a nivel general para dar el proyecto por terminado.
 
 ### Panel administrativo
 
-- [ ] **Módulo de Administradores** (`/admin/administradores` — hoy "Próximamente")
+- [x] **Módulo de Administradores** (`/admin/administradores`)
   - Listado con búsqueda y filtro por estado (Activo/Inactivo).
   - Crear administrador: invitar correo vía Supabase Auth + registro en tabla `administradores`.
   - Detalle: datos de la cuenta, `auth_user_id`, establecimientos bajo su responsabilidad.
@@ -22,7 +22,7 @@ más lo necesario a nivel general para dar el proyecto por terminado.
   - Revisión: ver descripción, reportante y establecimiento; cambiar estado;
     guardar `administrador_revision_id`, `fecha_revision` y `observacion_admin`.
   - Contador de reportes pendientes como badge en el menú lateral (el prototipo lo muestra).
-- [ ] **Recuperación de contraseña** ("¿Olvidaste tu contraseña?" en el login del prototipo).
+- [x] **Recuperación de contraseña** ("¿Olvidaste tu contraseña?" en el login del prototipo).
   - Flujo de Supabase `resetPasswordForEmail` + página de nueva contraseña.
 
 ### Sitio público
@@ -40,6 +40,9 @@ más lo necesario a nivel general para dar el proyecto por terminado.
 - [ ] **Correo real del administrador**: `admin@pradera.example` no recibe correos
   (ver NOTAS.txt). Cambiar a un correo real antes de producción — necesario también
   para recuperar contraseña e invitar administradores.
+- [ ] **SMTP propio en Supabase**: el SMTP integrado solo permite ~3 correos/hora
+  (`over_email_send_rate_limit`). Configurar un proveedor real (Resend, SendGrid…)
+  en el dashboard de Supabase antes de producción.
 - [ ] **Valoraciones**: la tabla `valoraciones` existe pero está reservada "para una
   versión futura". El prototipo muestra rating en tarjetas y ficha. Decidir:
   implementarla (formulario público + moderación en admin) o quitar el rating del diseño.

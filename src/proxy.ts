@@ -19,7 +19,8 @@ export async function proxy(request: NextRequest) {
   });
 
   const { data } = await supabase.auth.getClaims();
-  if (!data?.claims && request.nextUrl.pathname !== "/admin/login") {
+  const isPublic = request.nextUrl.pathname === "/admin/login" || request.nextUrl.pathname === "/admin/recuperar";
+  if (!data?.claims && !isPublic) {
     const redirect = NextResponse.redirect(new URL("/admin/login", request.url));
     response.cookies.getAll().forEach((c) => redirect.cookies.set(c));
     return redirect;
