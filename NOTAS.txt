@@ -4,3 +4,7 @@ Node js 24
 Correo: admin@pradera.example
 Contrasena: DxnjmIpUoVZTluvtN6uiAa1!
 (Cuenta con dominio reservado .example: no recibe correos. Cambiar a un correo real antes de produccion.)
+
+--- Proveedor (desarrollo) ---
+Correo: proveedor@pradera.example
+Contrasena: DxnjmIpUoVZTluvtN6uiAa1!
