@@ -21,7 +21,7 @@ export async function uploadObject(key: string, body: Uint8Array, contentType: s
   const res = await aws.fetch(objectUrl(c, key), {
     method: "PUT",
     body: body as BodyInit,
-    headers: { "Content-Type": contentType, "Cache-Control": "public, max-age=31536000, immutable" },
+    headers: { "Content-Type": contentType, "Content-Length": String(body.byteLength), "Cache-Control": "public, max-age=31536000, immutable" },
   });
   if (!res.ok) throw new Error(`R2 PUT ${res.status}: ${(await res.text()).slice(0, 200)}`);
   return `${c.publicUrl}/${key}`;
