@@ -1,5 +1,7 @@
 Node js 24
 
+Univerteam2212
+
 --- Administrador (desarrollo) ---
 Correo: admin@pradera.example
 Contrasena: DxnjmIpUoVZTluvtN6uiAa1!
