@@ -10,15 +10,19 @@ import { createClient } from "@/lib/supabase/server";
 async function AdminShell({ children }: { children: ReactNode }) {
   const admin = await requireAdmin();
   const supabase = await createClient();
-  const { count } = await supabase.from("reportes").select("id", { count: "exact", head: true }).neq("estado", "revisado").is("deleted_at", null);
+  const [{ count }, { count: ratingsCount }] = await Promise.all([
+    supabase.from("reportes").select("id", { count: "exact", head: true }).neq("estado", "revisado").is("deleted_at", null),
+    supabase.from("valoraciones").select("id", { count: "exact", head: true }).eq("estado", "pendiente").is("deleted_at", null),
+  ]);
   const pending = count ?? 0;
+  const pendingRatings = ratingsCount ?? 0;
   const initials = admin.nombre.split(" ").slice(0, 2).map((p) => p[0]).join("").toUpperCase();
 
   return (
     <div className="grid min-h-screen grid-cols-[72px_1fr] bg-[#f4f6f4] md:grid-cols-[242px_1fr]">
       <aside className="sticky top-0 flex h-screen flex-col bg-brand-950 px-2.5 py-[25px] text-white max-md:items-center md:px-[17px]">
         <Logo inverse hideTextOnMobile className="md:ml-2" />
-        <AdminNav pendingReports={pending} />
+        <AdminNav pendingReports={pending} pendingRatings={pendingRatings} />
         <div className="mt-auto flex items-center gap-2.5 border-t border-[#2c493d] px-1.5 pt-5 max-md:px-0">
           <span className="grid size-[35px] place-items-center rounded-[10px] bg-brand-600 text-[11px] font-bold">{initials}</span>
           <div className="flex min-w-0 flex-1 flex-col max-md:hidden">

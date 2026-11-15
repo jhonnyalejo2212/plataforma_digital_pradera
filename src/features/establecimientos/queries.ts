@@ -7,7 +7,7 @@ export const PAGE_SIZE = 9;
 
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
-const RESUMEN_SELECT = "id, nombre, slug, direccion, barrio, categorias!inner(nombre, slug), imagenes(url, texto_alternativo, es_principal, orden)";
+const RESUMEN_SELECT = "id, nombre, slug, direccion, barrio, valoracion_promedio, valoraciones_total, categorias!inner(nombre, slug), imagenes(url, texto_alternativo, es_principal, orden)";
 
 function principal(imagenes: Imagen[] | null) {
   const sorted = [...(imagenes ?? [])].sort((a, b) => Number(b.es_principal) - Number(a.es_principal) || a.orden - b.orden);
@@ -24,6 +24,7 @@ function toResumen(row: Row): EstablecimientoResumen {
     barrio: row.barrio,
     categoria: row.categorias,
     imagen: img ? { url: img.url, alt: img.texto_alternativo ?? row.nombre } : null,
+    valoracion: row.valoraciones_total > 0 && row.valoracion_promedio !== null ? { promedio: Number(row.valoracion_promedio), total: row.valoraciones_total } : null,
   };
 }
 
@@ -77,6 +78,7 @@ export async function listEstablecimientos(filtros: FiltrosDirectorio): Promise<
   if (orden === "recientes") query = query.order("created_at", { ascending: false });
   else if (orden === "antiguos") query = query.order("created_at");
   else if (orden === "nombre_desc") query = query.order("nombre", { ascending: false });
+  else if (orden === "mejor_calificados") query = query.order("valoracion_promedio", { ascending: false, nullsFirst: false }).order("valoraciones_total", { ascending: false }).order("nombre");
   else query = query.order("nombre");
   const from = (pagina - 1) * PAGE_SIZE;
   const { data, count, error } = await query.range(from, from + PAGE_SIZE - 1);
@@ -91,9 +93,11 @@ export async function getEstablecimientoBySlug(slug: string): Promise<Establecim
   const { data, error } = await createPublicClient()
     .from("establecimientos")
     .select(
-      "id, nombre, slug, descripcion, direccion, barrio, latitud, longitud, categorias!inner(nombre, slug), imagenes(url, texto_alternativo, es_principal, orden), horarios(dia_semana, hora_apertura, hora_cierre, cerrado, observacion), medios_contacto(tipo, valor, etiqueta), productos_servicios(id, nombre, descripcion, tipo, precio, disponible)",
+      "id, nombre, slug, descripcion, direccion, barrio, latitud, longitud, valoracion_promedio, valoraciones_total, categorias!inner(nombre, slug), imagenes(url, texto_alternativo, es_principal, orden), horarios(dia_semana, hora_apertura, hora_cierre, cerrado, observacion), medios_contacto(tipo, valor, etiqueta), productos_servicios(id, nombre, descripcion, tipo, precio, disponible), valoraciones(puntuacion, comentario, nombre_autor, created_at)",
     )
     .eq("slug", slug)
+    .order("created_at", { referencedTable: "valoraciones", ascending: false })
+    .limit(30, { referencedTable: "valoraciones" })
     .maybeSingle();
   if (error) throw error;
   if (!data) return null;
@@ -108,5 +112,6 @@ export async function getEstablecimientoBySlug(slug: string): Promise<Establecim
     horarios: [...row.horarios].sort((a, b) => a.dia_semana - b.dia_semana),
     contactos: row.medios_contacto,
     productos: row.productos_servicios,
+    valoraciones: row.valoraciones,
   };
 }

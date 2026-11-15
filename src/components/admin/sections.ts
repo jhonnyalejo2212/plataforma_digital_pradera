@@ -5,5 +5,6 @@ export const ADMIN_SECTIONS: { href: string; label: string; icon: IconName }[] =
   { href: "/admin/categorias", label: "Categorías", icon: "grid" },
   { href: "/admin/establecimientos", label: "Establecimientos", icon: "building" },
   { href: "/admin/administradores", label: "Administradores", icon: "users" },
+  { href: "/admin/valoraciones", label: "Valoraciones", icon: "star" },
   { href: "/admin/reportes", label: "Reportes", icon: "flag" },
 ];

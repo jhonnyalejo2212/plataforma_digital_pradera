@@ -23,9 +23,13 @@ export type EstablecimientoResumen = {
   barrio: string | null;
   categoria: { nombre: string; slug: string };
   imagen: { url: string; alt: string } | null;
+  valoracion: { promedio: number; total: number } | null;
 };
 
+export type ValoracionPublica = { puntuacion: number; comentario: string | null; nombre_autor: string | null; created_at: string };
+
 export type EstablecimientoDetalle = EstablecimientoResumen & {
+  valoraciones: ValoracionPublica[];
   descripcion: string | null;
   latitud: number | null;
   longitud: number | null;
@@ -35,5 +39,5 @@ export type EstablecimientoDetalle = EstablecimientoResumen & {
   productos: ProductoServicio[];
 };
 
-export type OrdenDirectorio = "nombre" | "nombre_desc" | "recientes" | "antiguos";
+export type OrdenDirectorio = "nombre" | "nombre_desc" | "recientes" | "antiguos" | "mejor_calificados";
 export type FiltrosDirectorio = { q?: string; categoria?: string; barrio?: string; orden: OrdenDirectorio; pagina: number };

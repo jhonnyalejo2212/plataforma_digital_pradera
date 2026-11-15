@@ -6,7 +6,7 @@ import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils/cn";
 import { ADMIN_SECTIONS } from "./sections";
 
-export function AdminNav({ pendingReports }: { pendingReports: number }) {
+export function AdminNav({ pendingReports, pendingRatings }: { pendingReports: number; pendingRatings: number }) {
   const pathname = usePathname();
   return (
     <nav className="mt-[34px] flex flex-col gap-[3px] overflow-y-auto">
@@ -24,6 +24,9 @@ export function AdminNav({ pendingReports }: { pendingReports: number }) {
             <span className="max-md:hidden">{label}</span>
             {href === "/admin/reportes" && pendingReports > 0 && (
               <small className="ml-auto rounded-lg bg-[#e65d52] px-1.5 py-0.5 text-[9px] text-white max-md:hidden">{pendingReports}</small>
+            )}
+            {href === "/admin/valoraciones" && pendingRatings > 0 && (
+              <small className="ml-auto rounded-lg bg-[#e65d52] px-1.5 py-0.5 text-[9px] text-white max-md:hidden">{pendingRatings}</small>
             )}
           </Link>
         );

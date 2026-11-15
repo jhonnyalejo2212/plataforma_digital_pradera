@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es" className={`${dmSans.variable} ${manrope.variable}`}>
-      <body className="min-h-screen">
+      <body className="min-h-screen" suppressHydrationWarning>
         <FeedbackProvider>{children}</FeedbackProvider>
       </body>
     </html>

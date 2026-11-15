@@ -4,11 +4,14 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { MapView } from "@/components/map/map-view";
 import { Gallery } from "@/components/public/gallery";
+import { RatingForm } from "@/components/public/rating-form";
+import { RatingBadge, Stars } from "@/components/public/rating-stars";
 import { ReportDialog } from "@/components/public/report-dialog";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { getEstablecimientoBySlug } from "@/features/establecimientos/queries";
 import type { EstablecimientoDetalle, MedioContacto } from "@/features/establecimientos/types";
+import { formatFecha } from "@/features/establecimientos/labels";
 import { DIAS, formatCOP, formatHora, googleMapsHref, mailHref, safeUrl, telHref, whatsappHref } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
 
@@ -103,6 +106,7 @@ async function DetailContent({ params }: { params: PageProps<"/directorio/[slug]
           <div className="border-b border-line pb-[30px]">
             <span className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-brand-600">{business.categoria.nombre}</span>
             <h1 className="my-2 text-[32px] md:text-[clamp(32px,4vw,47px)]">{business.nombre}</h1>
+            <a href="#valoraciones" className="mb-2.5 inline-flex"><RatingBadge valoracion={business.valoracion} /></a>
             {address && <p className="flex gap-[7px] text-sm text-muted"><Icon name="location" size={18} className="shrink-0" /> {address}</p>}
           </div>
           {(wa || tel) && (
@@ -143,6 +147,40 @@ async function DetailContent({ params }: { params: PageProps<"/directorio/[slug]
               {hasCoords && <Button href={googleMapsHref(business.latitud!, business.longitud!)} target="_blank" rel="noopener noreferrer" variant="ghost" icon="arrow">Cómo llegar en Google Maps</Button>}
             </article>
           )}
+          <article id="valoraciones" className="scroll-mt-6 py-[30px]">
+            <h2 className={h2Class}>Valoraciones</h2>
+            {business.valoracion ? (
+              <div className="mb-5 flex items-center gap-3.5">
+                <strong className="text-[40px] leading-none text-ink">{business.valoracion.promedio.toFixed(1)}</strong>
+                <div>
+                  <Stars value={business.valoracion.promedio} size={18} />
+                  <p className="mt-1 text-xs text-muted">{business.valoracion.total} {business.valoracion.total === 1 ? "valoración" : "valoraciones"}</p>
+                </div>
+              </div>
+            ) : (
+              <p className="mb-5 text-sm text-muted">Aún no hay valoraciones. ¡Sé la primera persona en opinar!</p>
+            )}
+            {business.valoraciones.length > 0 && (
+              <ul className="mb-7 grid gap-3">
+                {business.valoraciones.map((v, i) => (
+                  <li key={i} className="rounded-[12px] border border-line p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2.5">
+                        <Stars value={v.puntuacion} size={15} />
+                        <strong className="text-xs text-ink">{v.nombre_autor ?? "Anónimo"}</strong>
+                      </div>
+                      <time dateTime={v.created_at} className="text-[11px] text-muted">{formatFecha(v.created_at)}</time>
+                    </div>
+                    {v.comentario && <p className="mt-2 whitespace-pre-line text-sm leading-[1.6] text-body">{v.comentario}</p>}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className="rounded-[14px] border border-line bg-white p-[22px]">
+              <h3 className="mb-4 text-base">Deja tu valoración</h3>
+              <RatingForm slug={business.slug} nombre={business.nombre} />
+            </div>
+          </article>
         </div>
         <aside className="flex flex-col gap-[17px] lg:sticky lg:top-6">
           <div className="max-lg:hidden"><ContactCard contactos={business.contactos} /></div>

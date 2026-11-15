@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { RatingBadge } from "@/components/public/rating-stars";
 import { Icon } from "@/components/ui/icon";
 import type { EstablecimientoResumen } from "@/features/establecimientos/types";
 import { cn } from "@/lib/utils/cn";
@@ -21,6 +22,7 @@ export function BusinessCard({ business, compact = false }: { business: Establec
       <div className={cn("p-4 md:p-[21px]", compact && "md:p-[17px]")}>
         <span className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-brand-600">{business.categoria.nombre}</span>
         <h3 className={cn("mt-1.5 mb-[9px] text-base md:text-[19px]", compact && "md:text-base")}>{business.nombre}</h3>
+        {business.valoracion && <RatingBadge valoracion={business.valoracion} className="mb-2" />}
         {location && (
           <p className="flex items-center gap-[7px] text-[13px] text-muted">
             <Icon name="location" size={16} className="shrink-0" />{location}

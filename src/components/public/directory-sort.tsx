@@ -5,6 +5,7 @@ import { useUrlFilters } from "@/components/ui/url-filters";
 const OPCIONES = [
   { value: "", label: "Nombre A–Z" },
   { value: "nombre_desc", label: "Nombre Z–A" },
+  { value: "mejor_calificados", label: "Mejor calificados" },
   { value: "recientes", label: "Más recientes" },
   { value: "antiguos", label: "Más antiguos" },
 ];
