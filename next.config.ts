@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
-  experimental: { serverActions: { bodySizeLimit: "2mb" } },
+  experimental: { serverActions: { bodySizeLimit: "2mb" }, agentUpgrade: "security" },
   images: { remotePatterns: remoteHosts.map((hostname) => ({ protocol: "https", hostname })), formats: ["image/avif", "image/webp"] },
   turbopack: {
     rules: {
