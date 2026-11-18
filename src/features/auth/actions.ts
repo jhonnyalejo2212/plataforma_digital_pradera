@@ -1,9 +1,9 @@
 "use server";
 
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireAdmin } from "@/features/auth/dal";
+import { AUTH_REDIRECT_PATH, siteOrigin } from "@/lib/site-url";
 import { createClient } from "@/lib/supabase/server";
 
 export type LoginState = { message: string };
@@ -53,11 +53,9 @@ export async function solicitarRecuperacion(_prev: RecoveryState, formData: Form
   const parsed = recoverySchema.safeParse({ correo: formData.get("correo") });
   if (!parsed.success) return { message: "Ingresa un correo válido." };
 
-  const h = await headers();
-  const origin = `${h.get("x-forwarded-proto") ?? "http"}://${h.get("host")}`;
   const supabase = await createClient();
   await supabase.auth.resetPasswordForEmail(parsed.data.correo.toLowerCase(), {
-    redirectTo: `${origin}/auth/confirm?next=/admin/definir-contrasena`,
+    redirectTo: `${await siteOrigin()}${AUTH_REDIRECT_PATH}`,
   });
   return { sent: true, message: "Si ese correo está registrado, te enviamos un enlace para restablecer tu contraseña." };
 }

@@ -17,15 +17,18 @@ export async function GET(request: NextRequest) {
   const code = url.searchParams.get("code");
   const tokenHash = url.searchParams.get("token_hash");
   const type = url.searchParams.get("type") ?? "";
+  let failed = false;
 
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) console.error("auth/confirm code:", error.message);
     if (!error) return NextResponse.redirect(new URL(next, url.origin));
+    failed = true;
   } else if (tokenHash && OTP_TYPES.has(type as EmailOtpType)) {
     const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: type as EmailOtpType });
     if (error) console.error("auth/confirm token_hash:", error.message);
     if (!error) return NextResponse.redirect(new URL(next, url.origin));
+    failed = true;
   }
 
   // Cuando Supabase envía los tokens en `#access_token=...` (flujo implícito en invitaciones),
@@ -33,5 +36,6 @@ export async function GET(request: NextRequest) {
   // cliente lee `window.location.hash`, establece la sesión SSR y navega a `next`.
   const loginUrl = new URL("/admin/login", url.origin);
   loginUrl.searchParams.set("next", next);
+  if (failed) loginUrl.searchParams.set("error", "enlace");
   return NextResponse.redirect(loginUrl);
 }

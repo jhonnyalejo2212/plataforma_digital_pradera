@@ -21,6 +21,11 @@ export function LoginForm() {
   const toast = useToast();
 
   useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("error") === "enlace") {
+      window.history.replaceState(null, "", window.location.pathname);
+      queueMicrotask(() => setLinkError("El enlace del correo expiró o ya fue utilizado. Pide que te envíen uno nuevo."));
+      return;
+    }
     const rawHash = window.location.hash.replace(/^#/, "");
     if (!rawHash) return;
     const hashParams = new URLSearchParams(rawHash);

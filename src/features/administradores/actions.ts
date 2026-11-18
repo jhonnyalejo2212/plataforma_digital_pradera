@@ -1,21 +1,16 @@
 "use server";
 
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/features/auth/dal";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { AUTH_REDIRECT_PATH, siteOrigin } from "@/lib/site-url";
 import { administradorSchema, type AdministradorDetalle, type AdministradorResult } from "./schema";
 
 function toFieldErrors(error: { issues: { path: PropertyKey[]; message: string }[] }) {
   const map: Record<string, string> = {};
   for (const issue of error.issues) map[String(issue.path[0])] ??= issue.message;
   return map;
-}
-
-async function origin() {
-  const h = await headers();
-  return `${h.get("x-forwarded-proto") ?? "http"}://${h.get("host")}`;
 }
 
 /** Invita un correo vía Supabase Auth y registra la cuenta en `administradores`. */
@@ -37,7 +32,7 @@ export async function invitarAdministrador(formData: FormData): Promise<Administ
 
   const auth = createAdminClient();
   const { data: invite, error: inviteError } = await auth.auth.admin.inviteUserByEmail(correo, {
-    redirectTo: `${await origin()}/auth/confirm?next=/admin/definir-contrasena`,
+    redirectTo: `${await siteOrigin()}${AUTH_REDIRECT_PATH}`,
   });
   if (inviteError || !invite.user) {
     console.error("invitarAdministrador:", inviteError?.message);
@@ -124,7 +119,7 @@ export async function reenviarInvitacionAdministrador(id: number): Promise<Admin
   if (!target) return { ok: false, message: "No se encontró el administrador." };
   if (!target.activo) return { ok: false, message: "Activa primero la cuenta antes de enviar el enlace." };
 
-  const redirectTo = `${await origin()}/auth/confirm?next=/admin/definir-contrasena`;
+  const redirectTo = `${await siteOrigin()}${AUTH_REDIRECT_PATH}`;
   const auth = createAdminClient();
   const { error: inviteError } = await auth.auth.admin.inviteUserByEmail(target.correo, { redirectTo });
   if (!inviteError) return { ok: true, message: `Invitación reenviada a ${target.correo}.` };
